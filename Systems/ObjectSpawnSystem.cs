@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Game.Systems
 {
-    public class ObjsetSpawnSystem : GameSystem
+    public class ObjectSpawnSystem : GameSystem
     {
         private Dictionary<int, Queue<GameObject>> pools = new Dictionary<int, Queue<GameObject>>();
         private Dictionary<GameObject, int> instanceMap = new Dictionary<GameObject, int>(); //BAD!, better solution?
