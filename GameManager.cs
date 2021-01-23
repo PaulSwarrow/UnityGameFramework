@@ -53,14 +53,14 @@ namespace DefaultNamespace
 
         private void OnDestroy()
         {
-            systems.Foreach(system=> system.Stop());
+            systems.Foreach(system => system.Stop());
             EndEvent?.Invoke();
             instance = null;
         }
 
         private void OnDrawGizmos()
         {
-            if(!Application.isPlaying) return;
+            if (!Application.isPlaying) return;
             GizmosEvent?.Invoke();
         }
 
@@ -72,6 +72,11 @@ namespace DefaultNamespace
             map.Add(typeof(T), item);
         }
 
-        internal object GetObject(Type type) => map[type];
+        internal object GetObject(Type type)
+        {
+            if (map.TryGetValue(type, out var item)) return item;
+            Debug.LogError("Type was not injected: " + type);
+            return null;
+        }
     }
 }
