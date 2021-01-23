@@ -18,7 +18,7 @@ namespace DefaultNamespace
             
         }
 
-        public abstract void Init();
+        public virtual void Init() {}
         public abstract void Start();
         public abstract void Stop();
         
