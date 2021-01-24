@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lib.UnityQuickTools.Collections;
-using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace DefaultNamespace
 {
