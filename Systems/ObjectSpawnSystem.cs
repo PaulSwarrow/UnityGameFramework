@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using DefaultNamespace;
-using DefaultNamespace.Interfaces;
 using Lib.UnityQuickTools.Collections;
+using Libs.GameFramework.Interfaces;
 using UnityEngine;
 
-namespace Game.Systems
+namespace Libs.GameFramework.Systems
 {
     public class ObjectSpawnSystem : GameSystem
     {
@@ -12,7 +11,7 @@ namespace Game.Systems
         private Dictionary<GameObject, int> instanceMap = new Dictionary<GameObject, int>(); //BAD!, better solution?
 
 
-        public T Spawn<T>(T prefab, Vector3 position, Quaternion rotation, Transform parent = null)
+        public virtual T Spawn<T>(T prefab, Vector3 position, Quaternion rotation, Transform parent = null)
             where T : Component
         {
             T instance;
@@ -39,7 +38,7 @@ namespace Game.Systems
         }
 
 
-        public void Destroy<T>(T item) where T : Component
+        public virtual void Destroy<T>(T item) where T : Component
         {
             var gameObject = item.gameObject;
             gameObject.SetActive(false);
@@ -68,11 +67,11 @@ namespace Game.Systems
             item.OnDispose();
         }
 
-        public override void Start()
+        public override void Subscribe()
         {
         }
 
-        public override void Stop()
+        public override void Unsubscribe()
         {
         }
     }

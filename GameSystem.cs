@@ -1,26 +1,22 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using Lib.UnityQuickTools;
+﻿using Libs.GameFramework.Interfaces;
 
-namespace DefaultNamespace
+namespace Libs.GameFramework
 {
-    public abstract class GameSystem
+    public abstract class GameSystem : IGameSystem
     {
-        
-        internal void InjectDependencies()
+        public virtual void Init()
         {
-            foreach (var field in ReflectionTools.GetFieldsWithAttributes(GetType(),  typeof(InjectAttribute)))
-            {
-                var propertyType = field.FieldType;
-                field.SetValue(this, GameManager.instance.GetObject(propertyType));
-            }
-            
         }
 
-        public virtual void Init() {}
-        public abstract void Start();
-        public abstract void Stop();
-        
+        public abstract void Subscribe();
+        public abstract void Unsubscribe();
+
+        public virtual void Start()
+        {
+        }
+
+        public virtual void Stop()
+        {
+        }
     }
 }

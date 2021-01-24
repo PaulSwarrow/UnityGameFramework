@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Lib.UnityQuickTools;
 using Lib.UnityQuickTools.Collections;
+using Libs.GameFramework.Interfaces;
 using UnityEngine;
-using UnityEngine.Assertions;
 
-namespace DefaultNamespace
+namespace Libs.GameFramework
 {
     public abstract class GameManager : MonoBehaviour
     {
@@ -15,24 +16,23 @@ namespace DefaultNamespace
         public static event Action LateUpdateEvent;
         public static event Action EndEvent;
         public static event Action GizmosEvent;
-        public static GameManager instance { get; private set; }
 
 
-        private HashSet<GameSystem> systems = new HashSet<GameSystem>();
+        private HashSet<IGameSystem> systems = new HashSet<IGameSystem>();
         private Dictionary<Type, object> map = new Dictionary<Type, object>();
 
         private void Awake()
         {
-            Assert.IsNull(instance);
-            instance = this;
+            Register(this);
             RegisterDependencies();
-            systems.Foreach(item => item.InjectDependencies());
+            InjectDependencies();    
             systems.Foreach(item => item.Init());
         }
 
         private void Start()
         {
             ReadSceneEvent?.Invoke();
+            systems.Foreach(item => item.Subscribe());
             systems.Foreach(item => item.Start());
         }
 
@@ -53,9 +53,9 @@ namespace DefaultNamespace
 
         private void OnDestroy()
         {
-            systems.Foreach(system => system.Stop());
+            systems.Foreach(item => item.Stop());
+            systems.Foreach(system => system.Unsubscribe());
             EndEvent?.Invoke();
-            instance = null;
         }
 
         private void OnDrawGizmos()
@@ -68,11 +68,25 @@ namespace DefaultNamespace
 
         protected void Register<T>(T item)
         {
-            if (item is GameSystem system) systems.Add(system);
+            if (item is IGameSystem system) systems.Add(system);
             map.Add(typeof(T), item);
         }
 
-        internal object GetObject(Type type)
+        private void InjectDependencies()
+        {
+            foreach (var item in map.Values)
+            {
+                var itemType = item.GetType();
+                foreach (var field in ReflectionTools.GetFieldsWithAttributes(itemType,  typeof(InjectAttribute)))
+                {
+                    var propertyType = field.FieldType;
+                    field.SetValue(item, GetObject(propertyType));
+                }
+                
+            }
+        }
+
+        private object GetObject(Type type)
         {
             if (map.TryGetValue(type, out var item)) return item;
             Debug.LogError("Type was not injected: " + type);

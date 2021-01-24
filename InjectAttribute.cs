@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DefaultNamespace
+namespace Libs.GameFramework
 {
     public class InjectAttribute : Attribute
     {

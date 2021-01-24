@@ -1,4 +1,4 @@
-﻿namespace DefaultNamespace.Interfaces
+﻿namespace Libs.GameFramework.Interfaces
 {
     public interface IPoolable
     {
