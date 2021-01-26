@@ -24,7 +24,8 @@ namespace Libs.GameFramework
 
         private void Awake()
         {
-            Register(this);
+            BaseAppManager.current.InjectDependenciesTo(dependencies);
+            dependencies.Register(this);
             
             RegisterDependencies();
             dependencies.InjectDependencies();

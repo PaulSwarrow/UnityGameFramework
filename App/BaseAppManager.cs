@@ -13,11 +13,12 @@ namespace Libs.GameFramework
         private GenericMap<IAppModule> modules = new GenericMap<IAppModule>();
         private DependencyContainer dependencies = new DependencyContainer();
 
+        public static BaseAppManager current { get; private set; }
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
+            current = this;
         }
-
 
         private void Start()
         {
@@ -29,12 +30,17 @@ namespace Libs.GameFramework
             LoadApp();
         }
 
+        public void InjectDependenciesTo(DependencyContainer container)
+        {
+            container.AddDependencies(dependencies);
+        }
+
         private void LoadApp()
         {
             modules.Values.Foreach(item=> item.Init());
         }
 
-        public void Register<T>(T item)
+        protected void Register<T>(T item)
         {
             if (item is IAppModule module)
             {
