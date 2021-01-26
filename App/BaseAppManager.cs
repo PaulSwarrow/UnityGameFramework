@@ -18,14 +18,14 @@ namespace Libs.GameFramework
         {
             DontDestroyOnLoad(gameObject);
             current = this;
-        }
-
-        private void Start()
-        {
             dependencies.Register(this);
             RegisterDependencies();
 
             dependencies.InjectDependencies();
+        }
+
+        private void Start()
+        {
 
             LoadApp();
         }
