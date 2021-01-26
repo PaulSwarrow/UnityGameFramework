@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Lib.UnityQuickTools;
 using Lib.UnityQuickTools.Collections;
+using Libs.GameFramework.DI;
 using Libs.GameFramework.Interfaces;
 using UnityEngine;
 
@@ -19,13 +20,13 @@ namespace Libs.GameFramework
 
 
         private HashSet<IGameSystem> systems = new HashSet<IGameSystem>();
-        private Dictionary<Type, object> map = new Dictionary<Type, object>();
+        private DependencyContainer dependencies = new DependencyContainer();
 
         private void Awake()
         {
             Register(this);
             RegisterDependencies();
-            InjectDependencies();    
+            dependencies.InjectDependencies();
             systems.Foreach(item => item.Init());
         }
 
@@ -69,28 +70,7 @@ namespace Libs.GameFramework
         protected void Register<T>(T item)
         {
             if (item is IGameSystem system) systems.Add(system);
-            map.Add(typeof(T), item);
-        }
-
-        private void InjectDependencies()
-        {
-            foreach (var item in map.Values)
-            {
-                var itemType = item.GetType();
-                foreach (var field in ReflectionTools.GetFieldsWithAttributes(itemType,  typeof(InjectAttribute)))
-                {
-                    var propertyType = field.FieldType;
-                    field.SetValue(item, GetObject(propertyType));
-                }
-                
-            }
-        }
-
-        private object GetObject(Type type)
-        {
-            if (map.TryGetValue(type, out var item)) return item;
-            Debug.LogError("Type was not injected: " + type);
-            return null;
+            dependencies.Register(item);
         }
     }
 }
