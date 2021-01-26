@@ -4,6 +4,7 @@ namespace Libs.GameFramework
 {
     public abstract class GameSystem : IGameSystem
     {
+        [Inject] protected BaseGameManager gameManager;
         public virtual void Init()
         {
         }
