@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Libs.GameFramework
 {
-    public abstract class GameManager : MonoBehaviour
+    public abstract class BaseGameManager : MonoBehaviour
     {
         public static event Action ReadSceneEvent;
         public static event Action StartEvent;
@@ -25,6 +25,7 @@ namespace Libs.GameFramework
         private void Awake()
         {
             Register(this);
+            
             RegisterDependencies();
             dependencies.InjectDependencies();
             systems.Foreach(item => item.Init());

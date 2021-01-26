@@ -7,10 +7,16 @@ namespace Libs.GameFramework.DI
     public class DependencyContainer
     {
         private Dictionary<Type, object> map = new Dictionary<Type, object>();
+        private HashSet<DependencyContainer> externalDependencies = new HashSet<DependencyContainer>();
 
         public void Register<T>(T item)
         {
             map.Add(typeof(T), item);
+        }
+
+        public void AddExternalDependencies(DependencyContainer container)
+        {
+            externalDependencies.Add(container);
         }
 
         public void InjectDependencies()
@@ -20,16 +26,23 @@ namespace Libs.GameFramework.DI
                 var itemType = item.GetType();
                 foreach (var field in ReflectionTools.GetFieldsWithAttributes(itemType, typeof(InjectAttribute)))
                 {
-                    var propertyType = field.FieldType;
-                    field.SetValue(item, GetObject(propertyType));
+                    if (GetObject(field.FieldType, out var value))
+                    {
+                        field.SetValue(item, value);
+                    }
                 }
             }
         }
 
-        public object GetObject(Type type)
+        private bool GetObject(Type type, out object result)
         {
-            if (map.TryGetValue(type, out var item)) return item;
-            return null;
+            if (map.TryGetValue(type, out result)) return true;
+            foreach (var container in externalDependencies)
+            {
+                if (container.GetObject(type, out result)) return true;
+            }
+
+            return false;
         }
 
         public void Dispose()
@@ -42,7 +55,7 @@ namespace Libs.GameFramework.DI
                     field.SetValue(item, null);
                 }
             }
-            
+
             map.Clear();
             map = null;
         }

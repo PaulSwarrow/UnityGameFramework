@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Libs.GameFramework
 {
-    public abstract class AppManager : MonoBehaviour
+    public abstract class BaseAppManager : MonoBehaviour
     {
         private GenericMap<IAppModule> modules = new GenericMap<IAppModule>();
         private DependencyContainer dependencies = new DependencyContainer();
