@@ -10,10 +10,12 @@ namespace Libs.GameFramework
 {
     public abstract class BaseAppManager : MonoBehaviour
     {
+        public static BaseAppManager current { get; private set; }
+        public static bool IsReady() => current && current.isReady;
         private GenericMap<IAppModule> modules = new GenericMap<IAppModule>();
         private DependencyContainer dependencies = new DependencyContainer();
+        private bool isReady;
 
-        public static BaseAppManager current { get; private set; }
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
@@ -26,7 +28,6 @@ namespace Libs.GameFramework
 
         private void Start()
         {
-
             LoadApp();
         }
 
@@ -37,7 +38,8 @@ namespace Libs.GameFramework
 
         private void LoadApp()
         {
-            modules.Values.Foreach(item=> item.Init());
+            modules.Values.Foreach(item => item.Init());
+            isReady = true;
         }
 
         protected void Register<T>(T item)

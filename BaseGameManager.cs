@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Lib.UnityQuickTools;
 using Lib.UnityQuickTools.Collections;
@@ -24,16 +25,21 @@ namespace Libs.GameFramework
 
         private void Awake()
         {
+            StartCoroutine(Init());
+        }
+
+        private IEnumerator Init()
+        {
+            yield return new WaitUntil(BaseAppManager.IsReady);
+            
             BaseAppManager.current.InjectDependenciesTo(dependencies);
             dependencies.Register(this);
             
             RegisterDependencies();
             dependencies.InjectDependencies();
             systems.Foreach(item => item.Init());
-        }
-
-        private void Start()
-        {
+            
+            
             ReadSceneEvent?.Invoke();
             systems.Foreach(item => item.Subscribe());
             systems.Foreach(item => item.Start());
