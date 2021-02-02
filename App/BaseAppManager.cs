@@ -42,7 +42,7 @@ namespace Libs.GameFramework
             isReady = true;
         }
 
-        protected void Register<T>(T item)
+        protected void Register<T>(T item) where T : class
         {
             if (item is IAppModule module)
             {

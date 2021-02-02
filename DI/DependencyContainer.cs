@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lib.UnityQuickTools;
+using UnityEngine.Assertions;
 
 namespace Libs.GameFramework.DI
 {
@@ -8,9 +9,19 @@ namespace Libs.GameFramework.DI
     {
         private Dictionary<Type, object> map = new Dictionary<Type, object>();
 
-        public void Register<T>(T item)
+        public void Register<T>(T item) where T : class
         {
-            map.Add(typeof(T), item);
+            var type = typeof(T);
+            Assert.IsNotNull(item, $"Register null for {type} type");
+            map.Add(type, item);
+        }
+
+        public void Register(IEnumerable<object> items)
+        {
+            foreach (var item in items)
+            {
+                map.Add(item.GetType(), item);
+            }
         }
 
         public void AddDependencies(DependencyContainer container)

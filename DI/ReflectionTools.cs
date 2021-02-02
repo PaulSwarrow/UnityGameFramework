@@ -9,7 +9,8 @@ namespace Libs.GameFramework.DI
     {
         public static IEnumerable<FieldInfo> GetFieldsWithAttributes(Type instanceType, Type attributeType)
         {
-           return instanceType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+           return instanceType.GetFields(
+                   BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                .Where(prop => Attribute.IsDefined(prop, attributeType));
 
         }

@@ -75,7 +75,7 @@ namespace Libs.GameFramework
 
         protected abstract void RegisterDependencies();
 
-        protected void Register<T>(T item)
+        protected void Register<T>(T item) where T : class
         {
             if (item is IGameSystem system) systems.Add(system);
             dependencies.Register(item);
