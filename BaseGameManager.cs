@@ -11,13 +11,13 @@ namespace Libs.GameFramework
 {
     public abstract class BaseGameManager : MonoBehaviour
     {
-        public static event Action ReadSceneEvent;
-        public static event Action StartEvent;
-        public static event Action UpdateEvent;
-        public static event Action FixedUpdateEvent;
-        public static event Action LateUpdateEvent;
-        public static event Action EndEvent;
-        public static event Action GizmosEvent;
+        public event Action ReadSceneEvent;
+        public event Action StartEvent;
+        public event Action UpdateEvent;
+        public event Action FixedUpdateEvent;
+        public event Action LateUpdateEvent;
+        public event Action EndEvent;
+        public event Action GizmosEvent;
 
 
         private HashSet<IGameSystem> systems = new HashSet<IGameSystem>();
