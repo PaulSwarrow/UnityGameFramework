@@ -14,5 +14,12 @@ namespace Libs.GameFramework.DI
                .Where(prop => Attribute.IsDefined(prop, attributeType));
 
         }
+        public static IEnumerable<PropertyInfo> GetPropsWithAttributes(Type instanceType, Type attributeType)
+        {
+           return instanceType.GetProperties(
+                   BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+               .Where(prop => Attribute.IsDefined(prop, attributeType));
+
+        }
     }
 }

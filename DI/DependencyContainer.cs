@@ -44,6 +44,14 @@ namespace Libs.GameFramework.DI
                         field.SetValue(item, value);
                     }
                 }
+
+                foreach (var property in ReflectionTools.GetPropsWithAttributes(itemType, typeof(InjectAttribute)))
+                {
+                    if (map.TryGetValue(property.PropertyType, out var value))
+                    {
+                        property.SetValue(item, value);
+                    }
+                }
             }
         }
 
@@ -55,6 +63,14 @@ namespace Libs.GameFramework.DI
                 foreach (var field in ReflectionTools.GetFieldsWithAttributes(itemType, typeof(InjectAttribute)))
                 {
                     field.SetValue(item, null);
+                }
+
+                foreach (var property in ReflectionTools.GetPropsWithAttributes(itemType, typeof(InjectAttribute)))
+                {
+                    if (map.TryGetValue(property.PropertyType, out var value))
+                    {
+                        property.SetValue(item, null);
+                    }
                 }
             }
 

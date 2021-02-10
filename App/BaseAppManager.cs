@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using App;
 using Lib.UnityQuickTools.Collections;
 using Libs.GameFramework.DI;
@@ -10,13 +11,13 @@ namespace Libs.GameFramework
 {
     public abstract class BaseAppManager : MonoBehaviour
     {
-        public static BaseAppManager current { get; private set; }
+        public static BaseAppManager current { get; protected set; }
+        public bool isReady { get; protected set; }
         public static bool IsReady() => current && current.isReady;
         private GenericMap<IAppModule> modules = new GenericMap<IAppModule>();
         private DependencyContainer dependencies = new DependencyContainer();
-        private bool isReady;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             DontDestroyOnLoad(gameObject);
             current = this;
@@ -24,16 +25,12 @@ namespace Libs.GameFramework
             RegisterDependencies();
 
             dependencies.InjectDependencies();
+            
         }
 
         private void Start()
         {
             LoadApp();
-        }
-
-        public void InjectDependenciesTo(DependencyContainer container)
-        {
-            container.AddDependencies(dependencies);
         }
 
         private void LoadApp()
@@ -51,7 +48,22 @@ namespace Libs.GameFramework
 
             dependencies.Register(item);
         }
-
         protected abstract void RegisterDependencies();
+        public void InjectDependenciesTo(DependencyContainer container)
+        {
+            container.AddDependencies(dependencies);
+        }
+
+    }
+    public abstract class BaseAppManager<T> : BaseAppManager where T: BaseAppManager
+    {
+        public static T current { get; private set; }
+
+        protected override void Awake()
+        {
+            base.Awake();
+            current = this as T;
+        }
+
     }
 }
