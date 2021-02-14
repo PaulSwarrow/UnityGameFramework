@@ -11,7 +11,7 @@ namespace Libs.GameFramework.Systems
         private Dictionary<GameObject, int> instanceMap = new Dictionary<GameObject, int>(); //BAD!, better solution?
 
 
-        public virtual T Spawn<T>(T prefab, Vector3 position, Quaternion rotation, Transform parent = null)
+        public virtual T Spawn<T>(T prefab, Vector3 position = default, Quaternion rotation = default, Transform parent = null)
             where T : Component
         {
             T instance;
