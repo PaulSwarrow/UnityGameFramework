@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Lib.UnityQuickTools;
+using Project.Scripts.Game.Actors.Components;
 using UnityEngine.Assertions;
 
 namespace Libs.GameFramework.DI
@@ -12,6 +12,11 @@ namespace Libs.GameFramework.DI
         public void Register<T>(T item) where T : class
         {
             var type = typeof(T);
+            Register(type, item);
+        }
+
+        public void Register(Type type, object item)
+        {
             Assert.IsNotNull(item, $"Register null for {type} type");
             map.Add(type, item);
         }
@@ -20,7 +25,7 @@ namespace Libs.GameFramework.DI
         {
             foreach (var item in items)
             {
-                map.Add(item.GetType(), item);
+                Register(item.GetType(), item);
             }
         }
 
@@ -36,22 +41,32 @@ namespace Libs.GameFramework.DI
         {
             foreach (var item in map.Values)
             {
-                var itemType = item.GetType();
-                foreach (var field in ReflectionTools.GetFieldsWithAttributes(itemType, typeof(InjectAttribute)))
-                {
-                    if (map.TryGetValue(field.FieldType, out var value))
-                    {
-                        field.SetValue(item, value);
-                    }
-                }
+                Inject(item);
+            }
+        }
 
-                foreach (var property in ReflectionTools.GetPropsWithAttributes(itemType, typeof(InjectAttribute)))
+        public void Inject(object item)
+        {
+            var itemType = item.GetType();
+            foreach (var field in ReflectionTools.GetFieldsWithAttributes(itemType, typeof(InjectAttribute)))
+            {
+                if (map.TryGetValue(field.FieldType, out var value))
                 {
-                    if (map.TryGetValue(property.PropertyType, out var value))
-                    {
-                        property.SetValue(item, value);
-                    }
+                    field.SetValue(item, value);
                 }
+            }
+
+            foreach (var property in ReflectionTools.GetPropsWithAttributes(itemType, typeof(InjectAttribute)))
+            {
+                if (map.TryGetValue(property.PropertyType, out var value))
+                {
+                    property.SetValue(item, value);
+                }
+            }
+
+            foreach (var field in ReflectionTools.GetFieldsWithAttributes(itemType, typeof(InjectIntoAttribute)))
+            {
+                Inject(field.GetValue(item));
             }
         }
 

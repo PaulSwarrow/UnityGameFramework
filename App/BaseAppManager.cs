@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using App;
-using Lib.UnityQuickTools.Collections;
+﻿using Lib.UnityQuickTools.Collections;
 using Libs.GameFramework.DI;
 using Libs.GameFramework.Interfaces;
-using Mirror;
 using UnityEngine;
 
 namespace Libs.GameFramework
@@ -25,7 +21,6 @@ namespace Libs.GameFramework
             RegisterDependencies();
 
             dependencies.InjectDependencies();
-            
         }
 
         private void Start()
@@ -48,14 +43,16 @@ namespace Libs.GameFramework
 
             dependencies.Register(item);
         }
+
         protected abstract void RegisterDependencies();
+
         public void InjectDependenciesTo(DependencyContainer container)
         {
             container.AddDependencies(dependencies);
         }
-
     }
-    public abstract class BaseAppManager<T> : BaseAppManager where T: BaseAppManager
+
+    public abstract class BaseAppManager<T> : BaseAppManager where T : BaseAppManager
     {
         public static T current { get; private set; }
 
@@ -64,6 +61,5 @@ namespace Libs.GameFramework
             base.Awake();
             current = this as T;
         }
-
     }
 }
